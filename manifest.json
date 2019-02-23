@@ -3,9 +3,9 @@
   "name": "CoderPrans To Do",
   "icons": [
     {
-      "src": "todos.jpg",
-      "size": "900x900",
-      "type": "image/jpeg" 
+      "src": "todos.png",
+      "size": "512x512",
+      "type": "image/png" 
     }
   ],
   "start_url": ".",
