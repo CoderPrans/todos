@@ -6,6 +6,11 @@
       "src": "todos.png",
       "size": "512x512",
       "type": "image/png" 
+    },
+    {
+      "src": "phone3.png",
+      "size": "144x144",
+      "type": "image/png"
     }
   ],
   "start_url": ".",
