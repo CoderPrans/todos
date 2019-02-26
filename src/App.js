@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function Todo({todo, index, completeTodo, deleteTodo}) {
-return  <div style={{ textDecoration: todo.isCompleted ? 'line-through' : ''}} className="todo">
-    {todo.text} 
+return  <div className="todo">
+  <p onClick={() => completeTodo(index)} style={{ textDecoration: todo.isCompleted ? 'line-through' : ''}}>{todo.text}</p> 
     <div>
-      <button onClick={() => completeTodo(index)}>done</button>
-      <button onClick={() => deleteTodo(index)}>x</button>
-
+      <button className="delete" onClick={() => deleteTodo(index)}> 🗑️ </button>
     </div>
     </div>
 }
@@ -63,6 +61,7 @@ function App() {
 
     return (
       <div className="app">
+        <h1> todo: </h1>
         <div className="todo-list">
           {todos.map((todo, index) => (
             <Todo key={index} index={index} todo={todo} completeTodo={completeTodo} deleteTodo={deleteTodo}/> 

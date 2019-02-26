@@ -9,7 +9,12 @@
   border-radius: 4px;
   padding: 5px;
   max-width: 400px;
-  margin: 0 auto;
+  margin: 30px auto;
+}
+
+h1 {
+  text-align: center;
+  color: white; 
 }
 
 .todo {
@@ -36,11 +41,15 @@
 }
 
 button {
-  border: 1px solid #eee;
-  border-radius: 2px;
+  border: none;
+  border-radius: 3px;
   background: #fff;
-  font-size: 14px;
+  font-size: 18px;
   color: #666;
-  margin: 0 3px;
+  margin: 0 1.5px;
   cursor: pointer;
+}
+p {
+  cursor: pointer;
+  margin: 0;
 }
