@@ -15,13 +15,15 @@ function Todo({
 }) {
   return (
     <div className="todo" key={`${index}`}>
-      <span
-        draggable
-        onDragStart={e => onDragStart(e, index)}
-        onDragOver={e => onDragOver(e, index)}
-        onDragEnd={onDragEnd}>
-        <button>&#9776;</button>
-      </span>
+      {!('ontouchstart' in window) ? (
+        <span
+          draggable
+          onDragStart={e => onDragStart(e, index)}
+          onDragOver={e => onDragOver(e, index)}
+          onDragEnd={onDragEnd}>
+          <button>&#9776;</button>
+        </span>
+      ) : null}
       <p
         onClick={() => toggleCompleteTodo(index)}
         style={{textDecoration: todo.isCompleted ? 'line-through' : ''}}>
@@ -90,7 +92,7 @@ function App() {
     e.dataTransfer.setData('text/html', e.target.parentNode);
     e.dataTransfer.setDragImage(e.target.parentNode, 20, 20);
   };
-  const onDragEnd = e => {
+  const onDragEnd = () => {
     draggedIdx = null;
   };
   const onDragOver = (e, idxDragOver) => {
