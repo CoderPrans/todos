@@ -1,9 +1,27 @@
 import React, {useState, useEffect} from 'react';
 import './App.css';
 
-function Todo({todo, index, toggleCompleteTodo, deleteTodo}) {
+let draggedItem = ''; //draggedItem
+let draggedOverItem = ''; //draggedOver
+let draggedIdx = '';
+function Todo({
+  todo,
+  index,
+  toggleCompleteTodo,
+  deleteTodo,
+  onDragStart,
+  onDragEnd,
+  onDragOver,
+}) {
   return (
-    <div className="todo">
+    <div className="todo" key={`${index}`}>
+      <span
+        draggable
+        onDragStart={e => onDragStart(e, index)}
+        onDragOver={e => onDragOver(e, index)}
+        onDragEnd={onDragEnd}>
+        <button>&#9776;</button>
+      </span>
       <p
         onClick={() => toggleCompleteTodo(index)}
         style={{textDecoration: todo.isCompleted ? 'line-through' : ''}}>
@@ -65,6 +83,29 @@ function App() {
     newTodos.splice(index, 1);
     setTodos(newTodos);
   };
+  const onDragStart = (e, idxDragged) => {
+    draggedIdx = idxDragged;
+    draggedItem = todos[idxDragged];
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', e.target.parentNode);
+    e.dataTransfer.setDragImage(e.target.parentNode, 20, 20);
+  };
+  const onDragEnd = e => {
+    draggedIdx = null;
+  };
+  const onDragOver = (e, idxDragOver) => {
+    e.preventDefault();
+    draggedOverItem = todos[idxDragOver];
+    //if the item is dragged over itself, ignore
+    if (draggedItem === draggedOverItem) {
+      return;
+    }
+    // filter out the currently dragged item
+    let newTodos = [...todos].filter(todo => todo.text !== draggedItem.text);
+    // add the dragged item after draggedOverItem
+    newTodos.splice(idxDragOver, 0, draggedItem);
+    setTodos(newTodos);
+  };
   return (
     <div className="app">
       <h1> todo: </h1>
@@ -76,6 +117,9 @@ function App() {
             todo={todo}
             toggleCompleteTodo={toggleCompleteTodo}
             deleteTodo={deleteTodo}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            onDragOver={onDragOver}
           />
         ))}
         <TodoForm addTodo={addTodo} />
