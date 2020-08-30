@@ -1,18 +1,34 @@
 import React, {useState, useEffect} from 'react';
 import './App.css';
 
-let draggedItem = ''; //draggedItem
-let draggedOverItem = ''; //draggedOver
-let draggedIdx = '';
+let draggedItem: Todo; //draggedItem
+let draggedOverItem: Todo; //draggedOver
+let draggedIdx: number | null;
+
+type TodoProps = {
+  todo: Todo;
+  index: number;
+  toggleCompleteTodo: (i: number) => void;
+  deleteTodo: (i: number) => void;
+  onDragStart(e: React.DragEvent, i: number): void;
+  onDragOver(e: React.DragEvent, i: number): void;
+  onDragEnd: () => void;
+};
+
+type Todo = {
+  text: string;
+  isCompleted: boolean;
+};
+
 function Todo({
   todo,
   index,
   toggleCompleteTodo,
   deleteTodo,
   onDragStart,
-  onDragEnd,
   onDragOver,
-}) {
+  onDragEnd,
+}: TodoProps) {
   return (
     <div className="todo" key={`${index}`}>
       {!('ontouchstart' in window) ? (
@@ -38,9 +54,10 @@ function Todo({
     </div>
   );
 }
-function TodoForm({addTodo}) {
+
+function TodoForm({addTodo}: {addTodo: (text: string) => void}) {
   const [value, setValue] = useState('');
-  const handleSubmit = e => {
+  const handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void = e => {
     e.preventDefault();
     if (!value) return;
     addTodo(value);
@@ -59,8 +76,8 @@ function TodoForm({addTodo}) {
   );
 }
 function App() {
-  const initialTodos = localStorage.getItem('_todos')
-    ? JSON.parse(localStorage.getItem('_todos'))
+  const initialTodos: Todo[] = localStorage.getItem('_todos')
+    ? JSON.parse(localStorage.getItem('_todos') || '{}')
     : [
         {text: 'Learn React Hooks', isCompleted: false},
         {text: 'Make Coffe', isCompleted: false},
@@ -71,31 +88,44 @@ function App() {
     localStorage.setItem('_todos', JSON.stringify(todos));
   }, [todos]);
 
-  const addTodo = text => {
-    const newTodos = [...todos, {text}];
+  const addTodo: (t: string) => void = text => {
+    const newTodos: Todo[] = [...todos, {text, isCompleted: false}];
     setTodos(newTodos);
   };
-  const toggleCompleteTodo = index => {
+  const toggleCompleteTodo: (i: number) => void = index => {
     const newTodos = [...todos];
     newTodos[index].isCompleted = newTodos[index].isCompleted ? false : true;
     setTodos(newTodos);
   };
-  const deleteTodo = index => {
+  const deleteTodo: (i: number) => void = index => {
     const newTodos = [...todos];
     newTodos.splice(index, 1);
     setTodos(newTodos);
   };
-  const onDragStart = (e, idxDragged) => {
+  const onDragStart: (e: React.DragEvent, i: number) => void = (
+    e,
+    idxDragged,
+  ) => {
     draggedIdx = idxDragged;
     draggedItem = todos[idxDragged];
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/html', e.target.parentNode);
-    e.dataTransfer.setDragImage(e.target.parentNode, 20, 20);
+    e.dataTransfer.setData(
+      'text/html',
+      `${(e.target as HTMLElement).parentNode}`,
+    );
+    e.dataTransfer.setDragImage(
+      (e.target as Element).parentNode as Element,
+      20,
+      20,
+    );
   };
   const onDragEnd = () => {
     draggedIdx = null;
   };
-  const onDragOver = (e, idxDragOver) => {
+  const onDragOver: (e: React.DragEvent, i: number) => void = (
+    e,
+    idxDragOver,
+  ) => {
     e.preventDefault();
     draggedOverItem = todos[idxDragOver];
     //if the item is dragged over itself, ignore
